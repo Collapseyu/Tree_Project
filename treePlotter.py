@@ -7,6 +7,7 @@ arrow_args=dict(arrowstyle="<-")
 """
 def plotNode(nodeTxt,centerPt,parentPt,nodeType):
     #annotate()该函数的作用是为绘制的图上指定的数据点xy添加一个注释nodeTxt,注释的位置由xytext指定
+    #centerPt 箭头指向中心点坐标 parentPt 祖先节点坐标
     createPlot.ax1.annotate(nodeTxt,xy=parentPt,
                                 xycoords='axes fraction',xytext=centerPt,
                                 textcoords='axes fraction',va="center",ha="center"
@@ -58,13 +59,13 @@ def plotMidText(cntrPt, parentPt, txtString):#父子节点间填充文本信息
 def plotTree(myTree, parentPt, nodeTxt):
     numLeafs=getNumLeafs(myTree)
     depth=getTreeDepth(myTree)
-    firstStr=list(myTree.keys())[0]  #获取数的第一个key值
-    cntrPt=(plotTree.xOff+(1.0+float(numLeafs))/2.0/plotTree.totalW,plotTree.yOff)
-    plotMidText(cntrPt,parentPt,nodeTxt)
-    plotNode(firstStr,cntrPt,parentPt,decisionNode) #指向子树
+    firstStr=list(myTree.keys())[0]  #获取数的第一个key值 python3 需要用list类型
+    cntrPt=(plotTree.xOff+(1.0+float(numLeafs))/2.0/plotTree.totalW,plotTree.yOff)#做x轴上的位置偏移
+    plotMidText(cntrPt,parentPt,nodeTxt) #箭头中间显示txt
+    plotNode(firstStr,cntrPt,parentPt,decisionNode) #指向子树 决策节点
     secondDict=myTree[firstStr]
     plotTree.yOff=plotTree.yOff-1.0/plotTree.totalD #减少y偏移
-    for key in secondDict.keys():
+    for key in secondDict.keys():       #递归调用 绘制子树
         if type(secondDict[key]).__name__=='dict':
             plotTree(secondDict[key],cntrPt,str(key))
         else:
@@ -83,7 +84,6 @@ def createPlot(inTree):
     plotTree.yOff = 1.0;
     plotTree(inTree, (0.5, 1.0), '')
     plt.show()
-
 
 
 

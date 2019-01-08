@@ -91,7 +91,28 @@ def createTree(dataSet,labels):
         subLabels=labels[:]#python中的函数参数是列表类型时，参数按照引用传递，避免递归调用中改变list的原始数据
         myTree[bestfeatLabel][value]=createTree(splitDataSet(dataSet,bestFeat,value),subLabels)
     return myTree
-
+def classify(inputTree, featLabels, testVec):
+    #决策树 特征值Labels 测试特征值
+    firstStr=list(inputTree.keys())[0] #取出树中的第一个键值
+    secondDict =inputTree[firstStr] #得到该键值下对应的value
+    featIndex=featLabels.index(firstStr) #通过该键值得到特征值Labels中对应的索引
+    for key in secondDict.keys():   #比对测试数据中该特征值数据与树中的数据 得到一致的
+        if testVec[featIndex]==key:    #找到了 如果 该值下还有key值 则递归调用 直到找到
+            if type(secondDict[key]).__name__=='dict':
+                classLabel=classify(secondDict[key],featLabels,testVec)  #递归调用 调用的secondDict[key]值下的子树
+            else:
+                classLabel=secondDict[key]
+    return classLabel
+def storeTree(inputTree,filename):
+    #存储树
+    import pickle
+    fw=open(filename,'wb+')
+    pickle.dump(inputTree,fw) #文件写入
+    fw.close()
+def grabTree(filename):
+    import pickle
+    fr=open(filename,'rb')
+    return pickle.load(fr)
 
 
 
